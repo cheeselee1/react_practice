@@ -19,7 +19,7 @@ function App() {
       return(
       <div>
         <li>Your USD : {Value}$</li>
-        <li>To change Coin : {price * Value}</li>
+        <li>To change Coin : {Value / price}</li>
       </div>
     )});
     event.preventDefault();
