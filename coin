@@ -1,0 +1,52 @@
+import { useState, useEffect } from "react";
+
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [coins, setCoins] = useState([]);
+  const [Value, setValue] = useState();
+  const [enter, setEnter] = useState(false);
+  const [price, setPrice] = useState();
+  const onChange = (event) => {
+    setValue(event.target.value);
+  };
+  const Click = (event) => {
+    setEnter(false);
+    setPrice(event.target.value);
+  }
+  const onEnter = (event) => {
+    console.log(price * Value);
+    setEnter(() => {
+      return(
+      <div>
+        <li>Your USD : {Value}$</li>
+        <li>To change Coin : {price * Value}</li>
+      </div>
+    )});
+    event.preventDefault();
+    setValue("");
+  }
+  
+  useEffect(() =>{
+    fetch("https://api.coinpaprika.com/v1/tickers").then((response) => response.json()).then((json) => {
+      setCoins(json);
+      setLoading(false);
+      }
+  );
+  }, []);
+
+  return (
+    <div>
+      <h1>The Coin! {loading ? null : `(${coins.length})`}</h1>
+      <form>
+        <input placeholder="your USD" value={Value || ""} onChange={onChange} type="number" />
+        <button onClick={onEnter}>Enter</button>
+      </form>
+      {loading ? <strong>Loading...</strong> : <select onClick={Click}>
+        {coins.map((coin) => <option value={coin.quotes.USD.price} key={coin.id}>{coin.name} ({coin.symbol}) : {coin.quotes.USD.price}</option>)}
+      </select>}
+      {setEnter ? <h2>{enter}</h2> : null}
+    </div>
+  );
+}
+
+export default App;
